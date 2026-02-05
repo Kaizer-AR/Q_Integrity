@@ -1,0 +1,9 @@
+streamlit
+matplotlib
+groq
+langdetect
+numpy
+pandas
+openpyxl
+pathlib
+python-dateutil
