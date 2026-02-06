@@ -3429,9 +3429,9 @@ def _simple_audit_summarize(text: str) -> dict:
 
 def render_pantalla_8_ia():
     st.subheader("🤖 IA sobre EETT (modo auditor)")
-    # caption ampliado para mencionar PDF/OCR ---
+    # --- MODIFICADO: caption ampliado para mencionar PDF/OCR ---
     st.caption("Pantalla 8 · Selecciona EETT de Biblioteca · Lee WORD (.docx) o PDF (.pdf) y genera resumen + checklist QA/QC (sin inventar).")
-    # caption ---
+    # --- FIN MODIFICACIÓN: caption ---
 
     #REVISAR MENSAJES DE LISTA DE PENDIENTES EN COLA
     if "revision" in st.session_state:
@@ -3470,13 +3470,15 @@ def render_pantalla_8_ia():
 
 
     ext = (Path(abs_path).suffix or Path(str(row.get("Nombre_Original", ""))).suffix or "").lower().lstrip(".")
-    st.markdown(f"**DocID:** {docid} · **REV:** {rev} · **Ext:** .{ext}")
+    st.markdown(f"-**DocID:** {docid}")
+    st.markdown(f"-**REV:** {rev}")
+    st.markdown(f"-**Ext:** .{ext}")
 
     if not os.path.exists(abs_path):
         st.error("Archivo físico no encontrado en biblioteca_eett/.")
         return
 
-    # Extracción y OCR ---
+    # --- MODIFICADO: Extracción y OCR ---
     text = ""
     if ext == "docx":
         text = _read_docx_text_robust(abs_path)
@@ -3489,10 +3491,10 @@ def render_pantalla_8_ia():
         if not text or len(text.strip()) < 200:
             text, diag = _read_pdf_text_robust(abs_path, force_ocr=True)
         if not text.strip():
-            st.error("No pude extraer texto desde el PDF. Revisa que Poppler y Tesseract estén instalados en el sistema.")
+            st.error("No pude extraer texto desde el PDF.")
             return
     else:
-        st.warning("Tipo de archivo no soportado. Esta demo analiza DOCX y PDF  .")
+        st.warning("Tipo de archivo no soportado. Esta demo analiza DOCX y PDF (con OCR).")
         return
 
     # Detección de idioma y alerta si no es español
@@ -3501,7 +3503,7 @@ def render_pantalla_8_ia():
         st.warning(f"Idioma detectado: {lang}. El motor espera principalmente documentos en español.")
         if not st.checkbox("Continuar de todos modos (texto no en español)", value=False):
             return
-    # --- FIN MODIFICACIÓN: extracción y OCR backend ---
+    # --- FIN MODIFICACIÓN: extracción y OCR ---
 
     # ANALISIS DE IA Y GENERACION DE CHECKLISTS QA/QC
     # Leer las revisiones de checkboxes previas existentes
